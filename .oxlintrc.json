@@ -1,6 +1,10 @@
 {
    "$schema": "./node_modules/oxlint/configuration_schema.json",
-   "plugins": ["unicorn", "typescript", "oxc"],
+   "plugins": [
+      "unicorn",
+      "typescript",
+      "oxc"
+   ],
    "categories": {},
    "rules": {
       "import/first": "error",
@@ -101,8 +105,13 @@
       "unicorn/prefer-string-starts-ends-with": "warn"
    },
    "settings": {
-      "next": { "rootDir": [] },
-      "react": { "formComponents": [], "linkComponents": [] },
+      "next": {
+         "rootDir": []
+      },
+      "react": {
+         "formComponents": [],
+         "linkComponents": []
+      },
       "jsdoc": {
          "ignorePrivate": false,
          "ignoreInternal": false,
@@ -114,7 +123,13 @@
          "tagNamePreference": {}
       }
    },
-   "env": { "builtin": true },
+   "env": {
+      "builtin": true
+   },
    "globals": {},
-   "ignorePatterns": ["**/*.test.ts", "**/*.js"]
+   "ignorePatterns": [
+      "**/*.test.ts",
+      "**/*.js",
+      "use/**/*.ts"
+   ]
 }
