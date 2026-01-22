@@ -1,0 +1,39 @@
+{
+   "name": "con-utils",
+   "version": "0.0.1",
+   "description": "Basic Set of features",
+   "type": "module",
+   "scripts": {
+      "test": "vitest --run",
+      "build": "rolldown -c",
+      "release": "oxlint && oxfmt && tsgo && pnpm run test && pnpm run build && npm publish --tag latest --access=public"
+   },
+   "keywords": [
+      "ConMaster",
+      "utils"
+   ],
+   "files": [
+      "package.json",
+      "README.md",
+      "LICENSE",
+      "dist/*"
+   ],
+   "exports": {
+      "./cli": {
+         "default": "./dist/con-cli.js",
+         "import": "./dist/con-cli.js",
+         "types": "./dist/con-cli.d.ts"
+      }
+   },
+   "author": "ConMaster",
+   "license": "MIT",
+   "packageManager": "pnpm@10.28.1",
+   "devDependencies": {
+      "@typescript/native-preview": "7.0.0-dev.20251213.1",
+      "oxfmt": "^0.17.0",
+      "oxlint": "^1.32.0",
+      "rolldown": "1.0.0-rc.1",
+      "rolldown-plugin-dts": "^0.21.5",
+      "vitest": "^4.0.16"
+   }
+}
