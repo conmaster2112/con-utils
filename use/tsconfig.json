@@ -4,9 +4,7 @@
       "module": "esnext",
       "target": "esnext",
       "moduleResolution": "bundler",
-      "types": [
-         "@types/node"
-      ],
+      "types": ["@types/node"],
       "noEmit": true,
       "sourceMap": false,
       "declaration": true,
@@ -31,7 +29,5 @@
       "moduleDetection": "force",
       "skipLibCheck": true,
    },
-   "include": [
-      "src/**/*.ts"
-   ],
+   "include": ["src/**/*.ts"],
 }
