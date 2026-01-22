@@ -45,13 +45,21 @@ export class ParserError extends Error {
    public readonly command: Command;
    public readonly argv: string[];
    public readonly index: number;
+   public flags: Set<ValueFlag<unknown>> | null;
 
-   public constructor(command: Command, message: string, argv: string[], index: number) {
+   public constructor(
+      command: Command,
+      message: string,
+      argv: string[],
+      index: number,
+      flags?: Set<ValueFlag<unknown>>
+   ) {
       super(message);
       this.command = command;
       this.name = new.target.name;
       this.argv = argv;
       this.index = index;
+      this.flags = flags ?? null;
    }
 }
 
@@ -108,13 +116,20 @@ export class CommandsParser {
             const result = this.resolveFlag(command.flags, flag, this.getArgument(1));
             if (!result)
                if (this.getLastError())
-                  throw new ParserError(command, this.getLastError()!, this.argv, this.index);
+                  throw new ParserError(
+                     command,
+                     this.getLastError()!,
+                     this.argv,
+                     this.index,
+                     new Set(RESULT.flags.keys())
+                  );
                else
                   throw new ParserError(
                      command,
                      'Failed to resolve tag with name: ' + flag.name,
                      this.argv,
-                     this.index
+                     this.index,
+                     new Set(RESULT.flags.keys())
                   );
 
             const { flag: FLAG_TYPE, nextValueUsed, value } = result;
@@ -135,16 +150,25 @@ export class CommandsParser {
             command,
             `Unknown subcommand: ${command.getFullPathName()} >>${sub}<<`,
             this.argv,
-            this.index
+            this.index,
+            new Set(RESULT.flags.keys())
          );
       }
 
       this.index++;
-      const HRESULT = this.parse(cmd);
-      for (const flag of RESULT.flags.keys())
-         if (!HRESULT.flags.has(flag)) HRESULT.flags.set(flag, RESULT.flags.get(flag)!);
-
-      return HRESULT;
+      try {
+         const HRESULT = this.parse(cmd);
+         for (const flag of RESULT.flags.keys())
+            if (!HRESULT.flags.has(flag)) HRESULT.flags.set(flag, RESULT.flags.get(flag)!);
+         return HRESULT;
+      } catch (error) {
+         if (error instanceof ParserError) {
+            const flags = error.flags;
+            if (flags) RESULT.flags.keys().forEach(_ => flags.add(_));
+            else error.flags = new Set(RESULT.flags.keys());
+         }
+         throw error;
+      }
    }
 
    private parseActionCommand(command: CommandAction<unknown[]>): ParseResult {
@@ -162,7 +186,13 @@ export class CommandsParser {
          const result = this.resolveFlag(command.flags, flag, this.getArgument());
          if (!result) {
             if (this.getLastError())
-               throw new ParserError(command, this.getLastError()!, this.argv, this.index);
+               throw new ParserError(
+                  command,
+                  this.getLastError()!,
+                  this.argv,
+                  this.index,
+                  new Set(FLAGS_MAP.keys())
+               );
             else {
                positionals.push(argument);
                continue;
@@ -186,13 +216,20 @@ export class CommandsParser {
                   command,
                   `Missing required argument: ${command.getFullPathName()} ... ${def.toString()}`,
                   this.argv,
-                  this.index
+                  this.index,
+                  new Set(FLAGS_MAP.keys())
                );
             }
             finalArgs.push(def.defaultValue);
          } else {
             if (!def.validator.isValid(posVal)) {
-               throw new ParserError(command, `Invalid value: ${posVal}`, this.argv, this.index);
+               throw new ParserError(
+                  command,
+                  `Invalid value: ${posVal}`,
+                  this.argv,
+                  this.index,
+                  new Set(FLAGS_MAP.keys())
+               );
             }
             finalArgs.push(def.enforce(posVal));
          }

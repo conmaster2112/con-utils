@@ -1,4 +1,4 @@
-import { DIM, Format } from '../format-helper';
+import { DIM, Format } from '../general/format-helper';
 import { Command } from './command';
 
 const dim = DIM.wrap;

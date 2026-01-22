@@ -1,7 +1,7 @@
 import type { IInformative } from './base';
 import type { ParseResult } from './commands-parser';
 
-import { DIM } from '../format-helper';
+import { DIM } from '../general/format-helper';
 import { ArgumentLike } from './arguments';
 import { CommandHelpStringBuilder } from './command-help-string-builder';
 import { Flag, FlagsGroup } from './flags';
@@ -62,6 +62,7 @@ export class CommandAction<A extends unknown[]> extends Command {
    }
    public override *getHelp(): Generator<string, void, any> {
       yield* super.getHelp();
+      if (!this.argumentsTypes.length) return;
       yield dim('  Arguments:');
       yield* this.argumentsTypes.map(e => `    ${e.toString().padEnd(20)} ${dim(e.description ?? '')}`);
       yield '';

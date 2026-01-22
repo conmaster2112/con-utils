@@ -23,6 +23,11 @@
          "default": "./dist/con-cli.js",
          "import": "./dist/con-cli.js",
          "types": "./dist/con-cli.d.ts"
+      },
+      "./general": {
+         "default": "./dist/general.js",
+         "import": "./dist/general.js",
+         "types": "./dist/general.d.ts"
       }
    },
    "author": "ConMaster",

@@ -1,4 +1,4 @@
-import { FormatCode } from '../format-helper';
+import { FormatCode } from '../general/format-helper';
 import { CommandAction, GroupCommand, type ArgumentsLikeTypeMap, type Command } from './command';
 import { CommandsParser, ParserError } from './commands-parser';
 
@@ -29,7 +29,8 @@ export class CommandLine {
          return void result.getExecutable()?.();
       } catch (err) {
          if (err instanceof ParserError) {
-            console.error(FormatCode.create(31, 39).wrap('->' + err.message));
+            if (!err.flags?.has(err.command.uniqueHelpFlag))
+               console.error(FormatCode.create(31, 39).wrap('->' + err.message));
             console.error('\n', Array.from(err.command.getHelp()).join('\r\n'));
          } else throw err;
       }

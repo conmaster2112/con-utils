@@ -41,11 +41,21 @@ export class FormatCode {
 export const rgb = (r: number, g: number, b: number): ((str: string) => string) =>
    FormatCode.createForegroundRGB(r, g, b).wrap;
 
-const ACCENT_COLOR = FormatCode.createForegroundRGB(200, 150, 250).wrap;
-export const a = (template: TemplateStringsArray, ...args: unknown[]): string => {
-   return template.reduce((acc, part, i) => {
-      return acc + ACCENT_COLOR(args[i - 1] + '') + part;
-   });
+export const CREATE_ACCENT: (
+   common: FormatCode,
+   accent: FormatCode
+) => (template: TemplateStringsArray, ...args: unknown[]) => string = (c, a) => {
+   const ACCENT_COLOR = a.wrap;
+   const { prefix, suffix } = c;
+   return (template: TemplateStringsArray, ...args: unknown[]): string => {
+      return (
+         prefix +
+         template.reduce((acc, part, i) => {
+            return acc + ACCENT_COLOR(args[i - 1] + '') + prefix + part;
+         }) +
+         suffix
+      );
+   };
 };
 export const DIM: FormatCode = FormatCode.create(2, 22);
 export const ITALIC: FormatCode = FormatCode.create(3, 23);
